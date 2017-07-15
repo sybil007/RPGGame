@@ -6,18 +6,17 @@ public class MouseRotationCamera : MonoBehaviour
 
     public float speedH = 2.0f;
     public float speedV = 2.0f;
+    public float ScrollSpeed = 5.0f;
+    float minFov  = 15f;
+    float maxFov  = 90f;
 
     private float yaw = 0.0f;
     private float pitch = 0.0f;
-
-    float cameraDistanceMax = 10f;
-    float cameraDistanceMin = 1f;
-    float scrollSpeed = 0.5f;
-    float lastScrollPos = 0f;
+    private Camera camera;
 
     void Start()
     {
-        lastScrollPos = Input.GetAxis("Mouse ScrollWheel");
+        camera = GetComponent<Camera>();
     }
 
     void Update()
@@ -27,9 +26,10 @@ public class MouseRotationCamera : MonoBehaviour
 
         transform.eulerAngles = new Vector3(pitch, yaw, 0.0f);
 
-        var cameraDistance = (Input.GetAxis("Mouse ScrollWheel") - lastScrollPos) * scrollSpeed;
-        //cameraDistance = Mathf.Clamp(cameraDistance, cameraDistanceMin, cameraDistanceMax);
+        float fov = camera.fieldOfView;
+        fov += Input.GetAxis("Mouse ScrollWheel") * (-ScrollSpeed);
+        fov = Mathf.Clamp(fov, minFov, maxFov);
+        camera.fieldOfView = fov;
 
-        gameObject.transform.position += new Vector3(0f, 0f,-cameraDistance);
     }
 }

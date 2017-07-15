@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private const float GravityStrength = 9.81F;
     private Vector3 force = new Vector3(0.0F, 0.0F, 0.0F);
     private Vector3 position;
+    private Vector3 lastPosition;
 
     private bool leftButtonDown = false;
 
@@ -19,16 +20,14 @@ public class PlayerController : MonoBehaviour
     public new Camera camera;
     private new Collider collider;
     private CharacterController charController;
-    public Terrain ground;
-
-
 
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
         lastRotation = camera.transform.rotation;
         collider = gameObject.GetComponent<Collider>();
-        charController = GetComponent<CharacterController>();
+        charController = GetComponentInChildren<CharacterController>();
+        lastPosition = transform.position;
     }
 
     void Update()
@@ -45,7 +44,7 @@ public class PlayerController : MonoBehaviour
         float speed = BaseSpeed;
         bool wasMoved = false;
         var movement = new Vector3(0, 0, 0);
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             speed *= 3;
 
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
@@ -69,19 +68,14 @@ public class PlayerController : MonoBehaviour
             movement += gameObject.transform.rotation * new Vector3(speed, 0.0f, 0.0f) * Time.deltaTime;
         }
 
-        if (Input.GetKey(KeyCode.Space) && gameObject.transform.position.y == ground.transform.position.y)
+        if (Input.GetKey(KeyCode.Space) && transform.position.y == lastPosition.y)
             force.y += JumpForce;
 
         force.y -= GravityStrength * CharacterMass * Time.deltaTime;
         movement += force * Time.deltaTime;
+        lastPosition = gameObject.transform.position;
 
         charController.Move(movement);
-
-        if (gameObject.transform.position.y < ground.transform.position.y + 0.1F)
-        {
-            force.y = 0.0F;
-            gameObject.transform.position = new Vector3(gameObject.transform.position.x, ground.transform.position.y, gameObject.transform.position.z);
-        }
 
         position = gameObject.transform.position;
         animator.SetBool("Idling", !wasMoved);
