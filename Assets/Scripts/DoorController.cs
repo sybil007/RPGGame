@@ -53,7 +53,6 @@ public class DoorController : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            OpeningText.text = "";
             if (IsOpened)
             {
                 IsClosing = true;
@@ -67,6 +66,8 @@ public class DoorController : MonoBehaviour {
 
             IsOpened = !IsOpened;
         }
+
+        SetOpenCloseText();
     }
 
     void OnTriggerExit(Collider col)
@@ -75,6 +76,11 @@ public class DoorController : MonoBehaviour {
     }
 
     void OnTriggerEnter(Collider col)
+    {
+        SetOpenCloseText();
+    }
+
+    void SetOpenCloseText()
     {
         if (IsOpened)
             OpeningText.text = "Naciśnij 'E', aby zamknąć drzwi";
