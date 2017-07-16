@@ -7,6 +7,7 @@ public class DoorController : MonoBehaviour {
 
     private bool IsOpening = false;
     private bool IsClosing = false;
+    private bool CanChangeDoorState = true;
     public Text OpeningText;
 
     public float Speed = 40.0F;
@@ -47,11 +48,14 @@ public class DoorController : MonoBehaviour {
             else
                 gameObject.transform.Rotate(Vector3.back * Time.deltaTime * Speed);
         }
+
+        if (!Input.GetKey(KeyCode.E)) // Jeśli gracz ma puszczony przycisk, to może na nowo otworzyć drzwi
+            CanChangeDoorState = true;
     }
     
     void OnTriggerStay(Collider col)
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKey(KeyCode.E) && CanChangeDoorState)
         {
             if (IsOpened)
             {
@@ -64,6 +68,7 @@ public class DoorController : MonoBehaviour {
                 IsClosing = false;
             }
 
+            CanChangeDoorState = false;
             IsOpened = !IsOpened;
         }
 

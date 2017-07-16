@@ -13,13 +13,13 @@ public class PlayerController : MonoBehaviour
     private Vector3 position;
     private Vector3 lastPosition;
 
-    private bool leftButtonDown = false;
-
     private Animator animator;
     private Quaternion lastRotation;
     public new Camera camera;
     private new Collider collider;
     private CharacterController charController;
+
+    private bool isGrounded { get { return lastPosition.y == transform.position.y; } }
 
     void Start()
     {
@@ -68,11 +68,15 @@ public class PlayerController : MonoBehaviour
             movement += gameObject.transform.rotation * new Vector3(speed, 0.0f, 0.0f) * Time.deltaTime;
         }
 
-        if (Input.GetKey(KeyCode.Space) && transform.position.y == lastPosition.y)
+        if (isGrounded)
+            force.y = 0;
+
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && force.y <= 0)
             force.y += JumpForce;
 
         force.y -= GravityStrength * CharacterMass * Time.deltaTime;
         movement += force * Time.deltaTime;
+
         lastPosition = gameObject.transform.position;
 
         charController.Move(movement);
@@ -81,19 +85,12 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("Idling", !wasMoved);
 
         // Cios bronią
-        if (Input.GetMouseButton(0))// are we using the right button?
+        if (Input.GetMouseButtonDown(0))// are we using the right button?
         {
-            if (leftButtonDown != true)// was it previously down? if so we are already using "USE" bailout (we don't want to repeat attacks 800 times a second...just once per press please
-            {
                     animator.SetTrigger("Use");//tell mecanim to do the attack animation(trigger)
 
                     animator.SetBool("Idling", true);//stop moving
-                    leftButtonDown = true;//right button was not down before, mark it as down so we don't attack 800 frames a second 
-            }
         }
-
-        if (Input.GetMouseButtonUp(0))
-            leftButtonDown = false;
     }
 
     void LateUpdate()
