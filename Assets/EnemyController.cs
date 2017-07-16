@@ -13,41 +13,55 @@ public class EnemyController : MonoBehaviour
     private CharacterController controller;
     private Quaternion lookRotation;
     private Animator anim;
+
+    private Vector3 position;
+    private Quaternion rotation;
 	// Use this for initialization
 	void Start () {
         controller = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
+
+        if (Route.Count > 1)
+            anim.SetFloat("Speed", 1.0F);
+        else
+            anim.SetFloat("Speed", 0.0F);
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        if (IsEqual(transform.position, Route[currentPoint], 0.1f))
+	void Update ()
+    {
+        if (Route.Count > 1)
         {
-            currentPoint = (currentPoint + 1) % Route.Count;
-            //find the vector pointing from our position to the target
-            var direction = (Route[currentPoint] - transform.position).normalized;
-            //create the rotation we need to be in to look at the target
-            lookRotation = Quaternion.LookRotation(direction);
-        }
+            if (IsEqual(transform.position, Route[currentPoint], 0.1f))
+            {
+                currentPoint = (currentPoint + 1) % Route.Count;
+                //find the vector pointing from our position to the target
+                var direction = (Route[currentPoint] - transform.position).normalized;
+                //create the rotation we need to be in to look at the target
+                lookRotation = Quaternion.LookRotation(direction);
+            }
 
-        // Speed and time 
-        float step = Speed * Time.deltaTime;
-        //rotate us over time according to speed until we are in the required rotation
-        if (!IsEqual(lookRotation.eulerAngles, transform.rotation.eulerAngles, 0.1f))
-        {
-            anim.SetTrigger("idleTrigger");
-            anim.SetFloat("idleSelect", 0.6f);
-            anim.SetFloat("walkSelect", 0f);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * RotationSpeed);
+            // Speed and time 
+            float step = Speed * Time.deltaTime;
+            //rotate us over time according to speed until we are in the required rotation
+            if (!IsEqual(lookRotation.eulerAngles, transform.rotation.eulerAngles, 0.1f))
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * RotationSpeed);
+            }
+            else
+            {
+                controller.Move(Vector3.MoveTowards(transform.position, Route[currentPoint], step) - transform.position);
+            }
+
+            rotation = transform.rotation;
+            position = transform.position;
         }
-        else
-        {
-            // Get the enemy moving! 
-            anim.SetTrigger("idleTrigger");
-            anim.SetFloat("idleSelect", 0.1f);
-            anim.SetFloat("walkSelect", 0f);
-            controller.Move(Vector3.MoveTowards(transform.position, Route[currentPoint], step) - transform.position);
-        }
+    }
+
+    private void LateUpdate()
+    {
+        transform.position = position;
+        transform.rotation = rotation;
     }
 
     private bool IsEqual(Vector3 first, Vector3 second, float epsilon)
