@@ -22,9 +22,10 @@ public class EnemyController : MonoBehaviour
         anim = GetComponent<Animator>();
 
         if (Route.Count > 1)
-            anim.SetInteger("Speed", 1);
-        else
-            anim.SetInteger("Speed", 0);
+        {
+            anim.SetInteger(AnimatorHashes.Speed, 1);
+            anim.SetInteger(AnimatorHashes.Direction, (int)Direction.Forward);
+        }
 	}
 	
 	// Update is called once per frame
@@ -52,9 +53,6 @@ public class EnemyController : MonoBehaviour
             {
                 controller.Move(Vector3.MoveTowards(transform.position, Route[currentPoint], step) - transform.position);
             }
-
-            if (new System.Random().Next() % 100 == 0)
-                anim.SetTrigger("Attack");
 
             rotation = transform.rotation;
             position = transform.position;

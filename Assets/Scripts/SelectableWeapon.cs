@@ -7,6 +7,7 @@ public class SelectableWeapon : MonoBehaviour
     public Weapon weapon;
 
     public Text text;
+    private bool isActive;
 
     void Start()
     {
@@ -15,7 +16,7 @@ public class SelectableWeapon : MonoBehaviour
 
     void OnTriggerStay(Collider col)
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (col.tag == "Player" && !isActive && Input.GetKeyDown(KeyCode.E))
         {
             var player = GameObject.FindGameObjectWithTag("Player");
             var controller = player.GetComponent<PlayerController>();
@@ -29,6 +30,7 @@ public class SelectableWeapon : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.tag == "Player" && !isActive)
             text.text = new System.Text.StringBuilder("Naciśnij 'E', aby zamienić bieżącą broń na ")
             .Append(WeaponName)
             .ToString();
