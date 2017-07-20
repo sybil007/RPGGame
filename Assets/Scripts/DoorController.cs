@@ -72,7 +72,8 @@ public class DoorController : MonoBehaviour {
             IsOpened = !IsOpened;
         }
 
-        SetOpenCloseText();
+        if (col.tag == "Player")
+            SetOpenCloseText();
     }
 
     void OnTriggerExit(Collider col)
@@ -82,7 +83,8 @@ public class DoorController : MonoBehaviour {
 
     void OnTriggerEnter(Collider col)
     {
-        SetOpenCloseText();
+        if (col.tag == "Player")
+            SetOpenCloseText();
     }
 
     void SetOpenCloseText()

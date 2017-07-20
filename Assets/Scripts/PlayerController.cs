@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 force = new Vector3(0.0F, 0.0F, 0.0F);
     private Vector3 position;
     private Vector3 lastPosition;
+    private int lastSpeed = 0;
+    public GameObject CurrentWeapon;
 
     private Animator animator;
     private Quaternion lastRotation;
@@ -23,7 +25,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        animator = GetComponentInChildren<Animator>();
+        animator = GetComponent<Animator>();
         lastRotation = camera.transform.rotation;
         collider = gameObject.GetComponent<Collider>();
         charController = GetComponentInChildren<CharacterController>();
@@ -42,29 +44,32 @@ public class PlayerController : MonoBehaviour
 
         // Ruch postaci
         float speed = BaseSpeed;
-        bool wasMoved = false;
+        int Speed = 0;
         var movement = new Vector3(0, 0, 0);
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        {
+            Speed += 1;
             speed *= 3;
+        }
 
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            wasMoved = true;
+            Speed += 2;
             movement += gameObject.transform.rotation * new Vector3(0.0f, 0.0f, speed) * Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            wasMoved = true;
+            Speed += 2;
             movement += gameObject.transform.rotation * new Vector3(0.0f, 0.0f, -speed) * Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            wasMoved = true;
+            Speed += 2;
             movement += gameObject.transform.rotation * new Vector3(-speed, 0.0f, 0.0f) * Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            wasMoved = true;
+            Speed += 2;
             movement += gameObject.transform.rotation * new Vector3(speed, 0.0f, 0.0f) * Time.deltaTime;
         }
 
@@ -72,7 +77,16 @@ public class PlayerController : MonoBehaviour
             force.y = 0;
 
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded && force.y <= 0)
+        {
+            animator.SetTrigger("Jump");
             force.y += JumpForce;
+        }
+
+        if (lastSpeed != Speed)
+        {
+            lastSpeed = Speed;
+            animator.SetInteger("Speed", Speed);
+        }
 
         force.y -= GravityStrength * CharacterMass * Time.deltaTime;
         movement += force * Time.deltaTime;
@@ -82,14 +96,11 @@ public class PlayerController : MonoBehaviour
         charController.Move(movement);
 
         position = gameObject.transform.position;
-        animator.SetBool("Idling", !wasMoved);
 
         // Cios bronią
         if (Input.GetMouseButtonDown(0))// are we using the right button?
         {
-                    animator.SetTrigger("Use");//tell mecanim to do the attack animation(trigger)
-
-                    animator.SetBool("Idling", true);//stop moving
+            animator.SetTrigger("Attack");//tell mecanim to do the attack animation(trigger)
         }
     }
 
