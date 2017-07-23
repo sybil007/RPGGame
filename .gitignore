@@ -4,6 +4,7 @@
 /[Bb]uild/
 /[Bb]uilds/
 /Game_Data/
+/Gra_Data/
 /Assets/AssetStoreTools*
 
 # Visual Studio 2015 cache directory

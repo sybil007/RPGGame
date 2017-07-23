@@ -17,6 +17,24 @@ public enum Speed
     Sprint = 3
 }
 
+public enum IdlingType
+{
+    ArmInFront = 0,
+    GrabFromGround = 1,
+    Angry = 2,
+    Afraid = 3,
+    Neutral = 4,
+    Death = 5
+}
+
+public enum TaskState
+{
+    NotStarted = 0,
+    Opened = 1,
+    Finished = 2,
+    Failed = 3
+}
+
 
 public static class AnimatorHashes
 {
@@ -25,4 +43,6 @@ public static class AnimatorHashes
     public static readonly int Speed = Animator.StringToHash("Speed");
     public static readonly int Jump = Animator.StringToHash("Jump");
     public static readonly int Attack = Animator.StringToHash("Attack");
+    public static readonly int Type = Animator.StringToHash("Type");
+    public static readonly int Reset = Animator.StringToHash("Reset");
 }

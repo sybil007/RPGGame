@@ -1,0 +1,134 @@
+﻿using UnityEngine;
+using System;
+
+public class PlayerController : MonoBehaviour
+{
+
+    private const float GravityStrength = 9.81F;
+
+    #region MovementAndForces
+
+    private Vector3 force = new Vector3(0.0F, 0.0F, 0.0F);
+    private Vector3 lastPosition;
+    private Vector3 position;
+    private int lastSpeed = 0;
+    private Quaternion lastRotation;
+    private Direction lastDirection;
+
+    #endregion
+
+    #region CharacterObjectSettings
+
+    public float BasicSpeed = 50.0F;
+    public float JumpForce = 10.0F;
+    public float CharacterMass = 10.0F;
+    public GameObject CurrentWeapon;
+    private Animator animator;
+    private new Camera camera;
+    private CharacterController charController;
+
+    #endregion
+
+    private bool isGrounded { get { return lastPosition.y == transform.position.y; } }
+
+    public bool IsAttacking
+    {
+        get
+        {
+            return animator.GetCurrentAnimatorStateInfo(0).IsName("Attack");
+        }
+    }
+
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+        camera = Camera.main;
+        lastRotation = camera.transform.rotation;
+        charController = GetComponentInChildren<CharacterController>();
+        lastPosition = transform.position;
+    }
+
+    void Update()
+    {
+        // Obrót postaci
+        var CharacterRotation = camera.transform.rotation;
+        CharacterRotation.x = 0;
+        CharacterRotation.z = 0;
+        CharacterRotation.y = (4 * lastRotation.y + CharacterRotation.y) / 5.0F;
+        //gameObject.transform.rotation = CharacterRotation;
+        lastRotation = CharacterRotation;
+
+        // Ruch postaci
+        Direction dir = Direction.None;
+        var movementSpeed = BasicSpeed;
+        int AnimationSpeed = 0;
+        var movement = new Vector3(0, 0, 0);
+
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        {
+            movement += gameObject.transform.rotation * new Vector3(0.0f, 0.0f, movementSpeed) * Time.deltaTime;
+            AnimationSpeed = 2;
+            dir += (int)Direction.Forward;
+        }
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            movement += gameObject.transform.rotation * new Vector3(0.0f, 0.0f, -movementSpeed) * Time.deltaTime;
+            AnimationSpeed = 2;
+            dir += (int)Direction.Backward;
+        }
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            movement += gameObject.transform.rotation * new Vector3(-movementSpeed, 0.0f, 0.0f) * Time.deltaTime;
+            AnimationSpeed = 2;
+            dir += (int)Direction.Left;
+        }
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            movement += gameObject.transform.rotation * new Vector3(movementSpeed, 0.0f, 0.0f) * Time.deltaTime;
+            AnimationSpeed = 2;
+            dir += (int)Direction.Right;
+        }
+
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) && AnimationSpeed != 0)
+            AnimationSpeed = 3;
+
+        if (isGrounded)
+            force.y = 0;
+
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && force.y <= 0)
+        {
+            animator.SetTrigger(AnimatorHashes.Jump);
+        }
+
+        if (lastDirection != dir)
+        {
+            animator.SetInteger(AnimatorHashes.Direction, (int)dir);
+            lastDirection = dir;
+        }
+
+        if (lastSpeed != AnimationSpeed)
+        {
+            lastSpeed = AnimationSpeed;
+            animator.SetInteger(AnimatorHashes.Speed, AnimationSpeed);
+        }
+
+        // Siła grawitacji
+        //lastPosition = transform.position;
+        force.y -= GravityStrength * CharacterMass * Time.deltaTime;
+        movement += force * Time.deltaTime;
+        //charController.Move(movement);
+        charController.Move(force * Time.deltaTime);
+        //position = transform.position;
+
+        // Cios bronią
+        if (Input.GetMouseButtonDown(0))
+        {
+            animator.SetTrigger(AnimatorHashes.Attack);
+        }
+    }
+
+    public void LateUpdate()
+    {
+        transform.rotation = lastRotation;
+    }
+}

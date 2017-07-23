@@ -12,11 +12,11 @@ public class MouseRotationCamera : MonoBehaviour
 
     private float yaw = 0.0f;
     private float pitch = 0.0f;
-    private Camera camera;
+    private new Camera camera;
 
     void Start()
     {
-        camera = GetComponent<Camera>();
+        camera = Camera.main;
     }
 
     void Update()
