@@ -37,3 +37,4 @@ sysinfo.txt
 *.dll
 *.obj
 /*.exe
+/Gra_Data
