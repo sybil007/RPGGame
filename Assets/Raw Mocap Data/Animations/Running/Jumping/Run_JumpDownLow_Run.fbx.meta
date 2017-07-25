@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: d4d88c74cc8417d4c8ddf0b749128087
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 21
   fileIDToRecycleName:
     100000: //RootNode
     100002: Chest
@@ -184,6 +184,7 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
       name: _209_Run_JumpDownLow_Run
@@ -216,8 +217,8 @@ ModelImporter:
     - serializedVersion: 16
       name: RunJump
       takeName: _209_Run_JumpDownLow_Run
-      firstFrame: 90
-      lastFrame: 145
+      firstFrame: 105
+      lastFrame: 130
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -401,7 +402,10 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -417,6 +421,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 4
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:

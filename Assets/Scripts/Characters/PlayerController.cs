@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    private bool isGrounded { get { return lastPosition.y == transform.position.y; } }
+    private bool isGrounded { get { return Math.Abs(lastPosition.y - transform.position.y) < 0.1F; } }
 
     public bool IsAttacking
     {
@@ -55,36 +55,29 @@ public class PlayerController : MonoBehaviour
         CharacterRotation.x = 0;
         CharacterRotation.z = 0;
         CharacterRotation.y = (4 * lastRotation.y + CharacterRotation.y) / 5.0F;
-        //gameObject.transform.rotation = CharacterRotation;
         lastRotation = CharacterRotation;
 
         // Ruch postaci
         Direction dir = Direction.None;
-        var movementSpeed = BasicSpeed;
         int AnimationSpeed = 0;
-        var movement = new Vector3(0, 0, 0);
 
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            movement += gameObject.transform.rotation * new Vector3(0.0f, 0.0f, movementSpeed) * Time.deltaTime;
             AnimationSpeed = 2;
             dir += (int)Direction.Forward;
         }
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            movement += gameObject.transform.rotation * new Vector3(0.0f, 0.0f, -movementSpeed) * Time.deltaTime;
             AnimationSpeed = 2;
             dir += (int)Direction.Backward;
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            movement += gameObject.transform.rotation * new Vector3(-movementSpeed, 0.0f, 0.0f) * Time.deltaTime;
             AnimationSpeed = 2;
             dir += (int)Direction.Left;
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            movement += gameObject.transform.rotation * new Vector3(movementSpeed, 0.0f, 0.0f) * Time.deltaTime;
             AnimationSpeed = 2;
             dir += (int)Direction.Right;
         }
@@ -113,12 +106,9 @@ public class PlayerController : MonoBehaviour
         }
 
         // Siła grawitacji
-        //lastPosition = transform.position;
+        lastPosition = transform.position;
         force.y -= GravityStrength * CharacterMass * Time.deltaTime;
-        movement += force * Time.deltaTime;
-        //charController.Move(movement);
         charController.Move(force * Time.deltaTime);
-        //position = transform.position;
 
         // Cios bronią
         if (Input.GetMouseButtonDown(0))
