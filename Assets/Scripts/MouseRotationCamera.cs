@@ -13,10 +13,12 @@ public class MouseRotationCamera : MonoBehaviour
     private float yaw = 0.0f;
     private float pitch = 0.0f;
     private new Camera camera;
+    private GameObject player;
 
     void Start()
     {
         camera = Camera.main;
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     void Update()
@@ -30,6 +32,8 @@ public class MouseRotationCamera : MonoBehaviour
         fov += Input.GetAxis("Mouse ScrollWheel") * (-ScrollSpeed);
         fov = Mathf.Clamp(fov, minFov, maxFov);
         camera.fieldOfView = fov;
+
+        camera.transform.position = player.transform.position + player.transform.rotation * new Vector3(0,20,-10);
 
     }
 }
