@@ -8,16 +8,17 @@ public class TutorialController : MonoBehaviour
 {
     private enum TutorialState
     {
-        Intro = 0,
-        CameraRotation = 1,
-        CameraZoom = 2,
-        CharacterMovement = 3,
-        CharacterSprint = 4,
-        CharacterJump = 5,
-        DoorOpening = 6,
-        FirstTask = 7,
-        Exit = 8,
-        Finished = 9
+        NotStarted = 0,
+        Intro = 1,
+        CameraRotation = 2,
+        CameraZoom = 3,
+        CharacterMovement = 4,
+        CharacterSprint = 5,
+        CharacterJump = 6,
+        DoorOpening = 7,
+        FirstTask = 8,
+        Exit = 9,
+        Finished = 10
     }
     private DateTime lastChangeTime;
     private TutorialState state;
@@ -35,8 +36,7 @@ public class TutorialController : MonoBehaviour
 	void Start ()
     {
         TaskCompletedEvent.Handler += TaskCompleted;
-        textbox.text = "Witaj w samouczku! W kilku krokach zapoznam Cię z podstawami sterowania i interakcji z otoczeniem.";
-        lastChangeTime = DateTime.Now;
+
         trapObject = GameObject.Find("/Dom północny/_Door_parent/Door");
         trapObject.SendMessage("Activate", false);
 	}
@@ -46,15 +46,20 @@ public class TutorialController : MonoBehaviour
     {
 	    switch(state)
         {
+            case TutorialState.NotStarted:
+                textbox.text = "Witaj w samouczku! W kilku krokach zapoznasz się z podstawami sterowania i interakcji z otoczeniem.";
+                lastChangeTime = DateTime.Now;
+                state = TutorialState.Intro;
+                break;
             case TutorialState.Intro:
-                if (DateTime.Now > lastChangeTime.AddSeconds(15))
+                if (DateTime.Now < lastChangeTime.AddSeconds(10))
                     break;
                 textbox.text = "Porusz myszką, aby obrócić kamerę i postać.";
                 state = TutorialState.CameraRotation;
                 mouseX = Input.GetAxis("Mouse X");
                 break;
             case TutorialState.CameraRotation:
-                if (Math.Abs(Input.GetAxis("Mouse X") - mouseX) < 3)
+                if (Math.Abs(Input.GetAxis("Mouse X") - mouseX) < 2)
                     break;
                 textbox.text = "Użyj pokrętła myszy, aby przybliżać i oddalać kamerę";
                 state = TutorialState.CameraZoom;

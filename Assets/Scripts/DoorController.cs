@@ -14,6 +14,7 @@ public class DoorController : MonoBehaviour {
     public float OpenRotation;
     public float CloseRotation;
     public bool IsOpened = false;
+    public Axis Axis;
 
     // Zmienne na potrzeby samouczka
     private bool publishEvent = true;
@@ -30,7 +31,7 @@ public class DoorController : MonoBehaviour {
         var rotation = gameObject.transform.localEulerAngles;
         if (IsOpening)
         {
-            float leftRotation = OpenRotation - rotation.z;
+            float leftRotation = OpenRotation - (Axis == Axis.Y ? rotation.y : rotation.z);
             if (Time.deltaTime * Speed > leftRotation)
             {
                 IsOpening = false;
@@ -42,7 +43,7 @@ public class DoorController : MonoBehaviour {
         }
         else if (IsClosing)
         {
-            float leftRotation = rotation.z - CloseRotation;
+            float leftRotation = (Axis == Axis.Y ? rotation.y : rotation.z) - CloseRotation;
             if (Time.deltaTime * Speed > leftRotation)
             {
                 IsClosing = false;

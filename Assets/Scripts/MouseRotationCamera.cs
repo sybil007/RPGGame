@@ -14,15 +14,20 @@ public class MouseRotationCamera : MonoBehaviour
     private float pitch = 0.0f;
     private new Camera camera;
     private GameObject player;
+    public bool isActive = true;
 
     void Start()
     {
         camera = Camera.main;
         player = GameObject.FindGameObjectWithTag("Player");
+        PauseEvent.Handler += OnPauseEvent;
     }
 
     void Update()
     {
+        if (!isActive)
+            return;
+
         yaw += speedH * Input.GetAxis("Mouse X");
         pitch -= speedV * Input.GetAxis("Mouse Y");
 
@@ -35,5 +40,17 @@ public class MouseRotationCamera : MonoBehaviour
 
         camera.transform.position = player.transform.position + player.transform.rotation * new Vector3(0,20,-10);
 
+    }
+
+    private void OnPauseEvent(bool pause)
+    {
+        if (pause)
+        {
+            isActive = false;
+        }
+        else
+        {
+            isActive = true;
+        }
     }
 }

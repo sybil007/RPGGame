@@ -16,7 +16,10 @@ public class EnemyController : MonoBehaviour
 
     private Vector3 position;
     private Quaternion rotation;
-	// Use this for initialization
+    // Use this for initialization
+
+    private bool isActive = true;
+
 	void Start () {
         controller = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
@@ -26,11 +29,16 @@ public class EnemyController : MonoBehaviour
             anim.SetInteger(AnimatorHashes.Speed, 1);
             anim.SetInteger(AnimatorHashes.Direction, (int)Direction.Forward);
         }
+
+        PauseEvent.Handler += OnPauseEvent;
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
+        if (!isActive)
+            return;
+
         if (Route.Count > 1)
         {
             if (IsEqual(transform.position, Route[currentPoint], 0.1f))
@@ -77,5 +85,19 @@ public class EnemyController : MonoBehaviour
             return false;
 
         return true;
+    }
+
+    private void OnPauseEvent(bool pause)
+    {
+        if (pause)
+        {
+            isActive = false;
+            anim.speed = 0;
+        }
+        else
+        {
+            isActive = true;
+            anim.speed = 1;
+        }
     }
 }

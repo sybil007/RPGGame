@@ -35,6 +35,12 @@ public enum TaskState
     Failed = 3
 }
 
+public enum Axis
+{
+    Z = 0,
+    Y = 1,
+    X = 2
+}
 
 public static class AnimatorHashes
 {

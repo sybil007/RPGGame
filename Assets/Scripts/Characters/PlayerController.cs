@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private new Camera camera;
     private CharacterController charController;
+    private bool isActive = true;
 
     #endregion
 
@@ -46,10 +47,14 @@ public class PlayerController : MonoBehaviour
         lastRotation = camera.transform.rotation;
         charController = GetComponentInChildren<CharacterController>();
         lastPosition = transform.position;
+        PauseEvent.Handler += OnPauseEvent;
     }
 
     void FixedUpdate()
     {
+        if (!isActive)
+            return;
+
         // Obrót postaci
         var CharacterRotation = camera.transform.rotation;
         CharacterRotation.x = 0;
@@ -120,5 +125,19 @@ public class PlayerController : MonoBehaviour
     public void LateUpdate()
     {
         transform.rotation = lastRotation;
+    }
+
+    private void OnPauseEvent(bool pause)
+    {
+        if (pause)
+        {
+            isActive = false;
+            animator.speed = 0;
+        }
+        else
+        {
+            isActive = true;
+            animator.speed = 1;
+        }
     }
 }
