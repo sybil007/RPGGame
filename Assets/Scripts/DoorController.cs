@@ -15,9 +15,13 @@ public class DoorController : MonoBehaviour {
     public float CloseRotation;
     public bool IsOpened = false;
 
+    // Zmienne na potrzeby samouczka
+    private bool publishEvent = true;
+    private bool isActive = true;
+
 	// Use this for initialization
 	void Start () {
-        OpeningText.text = "";
+        TaskCompletedEvent.Handler += TaskCompleted;
     }
 	
 	// Update is called once per frame
@@ -55,6 +59,8 @@ public class DoorController : MonoBehaviour {
     
     void OnTriggerStay(Collider col)
     {
+        if (!isActive)
+            return;
         if (Input.GetKey(KeyCode.E) && CanChangeDoorState)
         {
             if (IsOpened)
@@ -70,6 +76,9 @@ public class DoorController : MonoBehaviour {
 
             CanChangeDoorState = false;
             IsOpened = !IsOpened;
+
+            if (publishEvent)
+                TaskCompletedEvent.Handler(TaskNames.OpenDoor);
         }
 
         if (col.tag == "Player")
@@ -83,6 +92,8 @@ public class DoorController : MonoBehaviour {
 
     void OnTriggerEnter(Collider col)
     {
+        if (!isActive)
+            return;
         if (col.tag == "Player")
             SetOpenCloseText();
     }
@@ -95,5 +106,20 @@ public class DoorController : MonoBehaviour {
             OpeningText.text = "Naciśnij 'E', aby otworzyć drzwi";
     }
 
+    void TaskCompleted(string name)
+    {
+        if (name == TaskNames.OpenDoor)
+            publishEvent = false;
+    }
 
+    void Activate(object value)
+    {
+        if (value is bool)
+        {
+            if ((bool)value == true)
+                isActive = true;
+            else
+                isActive = false;
+        }
+    }
 }

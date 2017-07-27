@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
         lastPosition = transform.position;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         // Obrót postaci
         var CharacterRotation = camera.transform.rotation;

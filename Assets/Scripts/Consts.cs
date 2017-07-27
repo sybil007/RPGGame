@@ -46,3 +46,9 @@ public static class AnimatorHashes
     public static readonly int Type = Animator.StringToHash("Type");
     public static readonly int Reset = Animator.StringToHash("Reset");
 }
+
+public static class TaskNames
+{
+    public static readonly string WrongShoes = "WrongShoes";
+    public static readonly string OpenDoor = "OpenDoor";
+}

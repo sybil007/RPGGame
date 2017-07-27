@@ -37,7 +37,7 @@ public class TaskOneLocationForest : MonoBehaviour {
 
 
         if (thiefController.IsAlive)
-            textbox.text = "O nie, on chyba znalazł buta. Kliknij LPM, aby zaatakować bandytę i odzyskać przedmiot!";
+            textbox.text = "To chyba bandyta, o którym mówiła sprzedawczyni. Kliknij LPM, aby zaatakować go i odzyskać towary!";
     }
 
     private void OnTriggerExit(Collider other)

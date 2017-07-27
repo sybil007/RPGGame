@@ -44,6 +44,6 @@ public class BootStealerController : MonoBehaviour {
         var task = controller.Tasks[TasksNames.WrongShoes] as WrongShoes;
         task.HasShoe = true;
 
-        textBox.text = "Brawo, odzyskałeś buta! Wróć do sprzedawczyni i oddaj go jej.";
+        textBox.text = "Brawo, odzyskałeś buty! Wróć do sprzedawczyni i oddaj je jej.";
     }
 }

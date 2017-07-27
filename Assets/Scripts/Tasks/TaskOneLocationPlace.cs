@@ -22,7 +22,7 @@ public class TaskOneLocationPlace : MonoBehaviour {
 
         if (task.State == TaskState.NotStarted)
         {
-            textbox.text = "On za chwilę zrobi mi krzywdę. Pomóż mi proszę. Na pewno musiałam zgubić dobrego buta gdzieś w lasku koło placu";
+            textbox.text = "On za chwilę zrobi mi krzywdę! Gdy szłam z dostawą na targ, zaatakował mnie bandyta, musiałam zostawić buty i uciekać. Proszę, odzyskaj je.";
             task.State = TaskState.Opened;
         }
 
@@ -38,6 +38,7 @@ public class TaskOneLocationPlace : MonoBehaviour {
             script.IsAngry = false;
             textbox.text = "Dziękuję, uratowałeś mi życie!";
             task.State = TaskState.Finished;
+            TaskCompletedEvent.Handler(TaskNames.WrongShoes);
         }
         
 	}

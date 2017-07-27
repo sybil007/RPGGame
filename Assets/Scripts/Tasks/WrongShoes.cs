@@ -14,7 +14,5 @@ public class WrongShoes : ITask
 
     void Update()
     {
-        if (State != TaskState.Opened)
-            return;
     }
 }
