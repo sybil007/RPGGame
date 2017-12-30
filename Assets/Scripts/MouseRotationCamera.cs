@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class MouseRotationCamera : MonoBehaviour
 {
-
     public float speedH = 2.0f;
     public float speedV = 2.0f;
     public float ScrollSpeed = 5.0f;
@@ -28,17 +28,29 @@ public class MouseRotationCamera : MonoBehaviour
         if (!isActive)
             return;
 
-        yaw += speedH * Input.GetAxis("Mouse X");
-        pitch -= speedV * Input.GetAxis("Mouse Y");
+        var isOverGUI = EventSystem.current.IsPointerOverGameObject();
+        if (!isOverGUI)
+        {
+            yaw += speedH * Input.GetAxis("Mouse X");
+            pitch -= speedV * Input.GetAxis("Mouse Y");
+        }
 
         transform.eulerAngles = new Vector3(pitch, yaw, 0.0f);
+        player.transform.eulerAngles = new Vector3(0.0f, yaw, 0.0f);
 
         float fov = camera.fieldOfView;
-        fov += Input.GetAxis("Mouse ScrollWheel") * (-ScrollSpeed);
+        if (!isOverGUI)
+            fov += Input.GetAxis("Mouse ScrollWheel") * (-ScrollSpeed);
         fov = Mathf.Clamp(fov, minFov, maxFov);
         camera.fieldOfView = fov;
 
-        camera.transform.position = player.transform.position + player.transform.rotation * new Vector3(0,20,-10);
+        if (Input.GetKey(KeyCode.Tab))
+        {
+            camera.transform.eulerAngles = camera.transform.eulerAngles + 180f * Vector3.up;
+            camera.transform.position = player.transform.position + player.transform.rotation * new Vector3(0, 20, 10);
+        }
+        else
+            camera.transform.position = player.transform.position + player.transform.rotation * new Vector3(0, 20, -10);
 
     }
 

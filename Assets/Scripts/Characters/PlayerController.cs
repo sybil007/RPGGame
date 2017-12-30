@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
@@ -54,13 +55,9 @@ public class PlayerController : MonoBehaviour
     {
         if (!isActive)
             return;
+        var isOverGUI = EventSystem.current.IsPointerOverGameObject();
 
-        // Obrót postaci
-        var CharacterRotation = camera.transform.rotation;
-        CharacterRotation.x = 0;
-        CharacterRotation.z = 0;
-        CharacterRotation.y = (4 * lastRotation.y + CharacterRotation.y) / 5.0F;
-        lastRotation = CharacterRotation;
+        // Obrót postaci jest w kontrolerze obrotu kamery
 
         // Ruch postaci
         Direction dir = Direction.None;
@@ -116,15 +113,8 @@ public class PlayerController : MonoBehaviour
         charController.Move(force * Time.deltaTime);
 
         // Cios bronią
-        if (Input.GetMouseButtonDown(0))
-        {
+        if (!isOverGUI && Input.GetMouseButtonDown(0))
             animator.SetTrigger(AnimatorHashes.Attack);
-        }
-    }
-
-    public void LateUpdate()
-    {
-        transform.rotation = lastRotation;
     }
 
     private void OnPauseEvent(bool pause)

@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Assets.Scripts.Tasks.WrongShoes;
+using Assets.Scripts.Tasks;
 
 public class BootStealerController : MonoBehaviour {
 
     Animator animator;
     public bool IsAlive;
-    public UnityEngine.UI.Text textBox;
 
 	// Use this for initialization
 	void Start ()
@@ -36,7 +35,10 @@ public class BootStealerController : MonoBehaviour {
         if (!playerScript.IsAttacking)
             return;
 
+        GameObject.Find("/Tasks/TaskWrongShoes/ForestTrigger").GetComponent<AudioSource>().Stop();
+
         IsAlive = false;
+        GetComponent<AudioSource>().Play();
         animator.SetTrigger(AnimatorHashes.Reset);
         animator.SetInteger(AnimatorHashes.Type, (int)IdlingType.Death);
 
@@ -44,6 +46,7 @@ public class BootStealerController : MonoBehaviour {
         var task = controller.Tasks[TasksNames.WrongShoes] as WrongShoes;
         task.HasShoe = true;
 
-        textBox.text = "Brawo, odzyskałeś buty! Wróć do sprzedawczyni i oddaj je jej.";
+        TaskTextboxChangeEvent.Handler("Brawo, odzyskałeś buty! Wróć do sprzedawczyni i oddaj je jej.", 10);
+        Assets.Scripts.UI.LogbookEvent.Handler(task.DisplayName, "Zabito złodzieja i odzyskano buty.");
     }
 }

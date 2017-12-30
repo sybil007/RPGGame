@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using Assets.Scripts.Tasks;
 
 public class TutorialController : MonoBehaviour
 {
@@ -16,9 +16,8 @@ public class TutorialController : MonoBehaviour
         CharacterSprint = 5,
         CharacterJump = 6,
         DoorOpening = 7,
-        FirstTask = 8,
-        Exit = 9,
-        Finished = 10
+        Exit = 8,
+        Finished = 9
     }
     private DateTime lastChangeTime;
     private TutorialState state;
@@ -28,8 +27,6 @@ public class TutorialController : MonoBehaviour
 
     private bool WPressed, APressed, DPressed, SPressed;
 
-
-    public Text textbox;
     public GameObject trapObject;
 
 	// Use this for initialization
@@ -47,35 +44,35 @@ public class TutorialController : MonoBehaviour
 	    switch(state)
         {
             case TutorialState.NotStarted:
-                textbox.text = "Witaj w samouczku! W kilku krokach zapoznasz się z podstawami sterowania i interakcji z otoczeniem.";
+                TaskTextboxChangeEvent.Handler("Witaj w samouczku! W kilku krokach zapoznasz się z podstawami sterowania i interakcji z otoczeniem.", 7);
                 lastChangeTime = DateTime.Now;
                 state = TutorialState.Intro;
                 break;
             case TutorialState.Intro:
-                if (DateTime.Now < lastChangeTime.AddSeconds(10))
+                if (DateTime.Now < lastChangeTime.AddSeconds(7))
                     break;
-                textbox.text = "Porusz myszką, aby obrócić kamerę i postać.";
+                TaskTextboxChangeEvent.Handler("Porusz myszką, aby obrócić kamerę i postać.", 20);
                 state = TutorialState.CameraRotation;
                 mouseX = Input.GetAxis("Mouse X");
                 break;
             case TutorialState.CameraRotation:
                 if (Math.Abs(Input.GetAxis("Mouse X") - mouseX) < 2)
                     break;
-                textbox.text = "Użyj pokrętła myszy, aby przybliżać i oddalać kamerę";
+                TaskTextboxChangeEvent.Handler("Użyj pokrętła myszy, aby przybliżać i oddalać kamerę. Klikając 'TAB' możesz odwrócić kamerę 'za siebie'", 20);
                 state = TutorialState.CameraZoom;
                 mouseScroll = Input.GetAxis("Mouse ScrollWheel");
                 break;
             case TutorialState.CameraZoom:
                 if (Math.Abs(Input.GetAxis("Mouse ScrollWheel") - mouseScroll) < 0.1)
                     break;
-                textbox.text = "Bardzo dobrze, umiesz już kontrolować kamerę. Użyj przycisków W,S,A,D lub strzałek, aby poruszyć postacią";
+                TaskTextboxChangeEvent.Handler("Bardzo dobrze, umiesz już kontrolować kamerę. Użyj przycisków W,S,A,D lub strzałek, aby poruszyć postacią", 20);
                 state = TutorialState.CharacterMovement;
                 break;
             case TutorialState.CharacterMovement:
                 if (WPressed && SPressed && APressed && DPressed)
                 {
                     state = TutorialState.CharacterSprint;
-                    textbox.text = "Naciśnij dodatkowo Shift, aby biec szybciej";
+                    TaskTextboxChangeEvent.Handler("Naciśnij dodatkowo Shift, aby biec szybciej", 20);
                 }
                 break;
             case TutorialState.CharacterSprint:
@@ -85,7 +82,7 @@ public class TutorialController : MonoBehaviour
                         || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) 
                         || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)))
                 {
-                    textbox.text = "Naciśnij Spację, aby skoczyć";
+                    TaskTextboxChangeEvent.Handler("Naciśnij Spację, aby skoczyć", 20);
                     state = TutorialState.CharacterJump;
                 }
                 break;
@@ -93,29 +90,15 @@ public class TutorialController : MonoBehaviour
                 if (Input.GetKey(KeyCode.Space))
                 {
                     trapObject.SendMessage("Activate", true);
-                    textbox.text = "Brawo, umiesz już sterować postacią. Drzwi niektórych budynków możesz otwierać. Podbiegnij do drzwi i naciśnij 'E', aby otworzyć je i wyjść na zewnątrz";
+                    TaskTextboxChangeEvent.Handler("Brawo, umiesz już sterować postacią. Drzwi niektórych budynków możesz otwierać. Podbiegnij do drzwi i naciśnij 'E', aby otworzyć je i wyjść na zewnątrz", 20);
                     state = TutorialState.DoorOpening;
                 }
                 break;
             case TutorialState.DoorOpening:
                 if (doorOpened)
                 {
-                    textbox.text = "O nie, kobieta na placu chyba potrzebuje Twojej pomocy. Pomóż jej!";
-                    state = TutorialState.FirstTask;
-                }
-                break;
-            case TutorialState.FirstTask:
-                if (wrongShoeTaskDone && lastChangeTime.AddSeconds(5) < DateTime.Now)
-                {
-                    textbox.text = "Gratulacje, ukończyłeś samouczek! Możesz teraz dowolnie eksplorować świat gry";
-                    state = TutorialState.Exit;
-                    lastChangeTime = DateTime.Now;
-                }
-                break;
-            case TutorialState.Exit:
-                if (lastChangeTime.AddSeconds(30) < DateTime.Now)
-                {
-                    textbox.text = "";
+                    TaskTextboxChangeEvent.Handler("Gratulacje, ukończyłeś samouczek! Pomóż postaciom koło głownego placu wioski", 20);
+                    Assets.Scripts.UI.LogbookEvent.Handler("Samouczek", "Ukończono!");
                     state = TutorialState.Finished;
                 }
                 break;

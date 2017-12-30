@@ -11,10 +11,4 @@ public class IdlingController : MonoBehaviour
         var animator = GetComponent<Animator>();
         animator.SetInteger("Type", 3);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
