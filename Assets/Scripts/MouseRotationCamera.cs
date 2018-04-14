@@ -23,7 +23,7 @@ public class MouseRotationCamera : MonoBehaviour
         PauseEvent.Handler += OnPauseEvent;
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (!isActive)
             return;

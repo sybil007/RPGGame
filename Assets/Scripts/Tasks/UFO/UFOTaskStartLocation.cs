@@ -11,6 +11,7 @@ namespace Assets.Scripts.Tasks.UFO
         public AudioClip taskAcceptedClip;
 
         UFOTask task;
+        TutorialController tutorial;
         AudioSource audioSource;
         AudioClip startClip;
         bool wasClipChanged = false;
@@ -70,6 +71,9 @@ namespace Assets.Scripts.Tasks.UFO
 
         private void OnTriggerExit(Collider other)
         {
+            if (other.tag != "Player")
+                return;
+
             if (task.State == TaskState.NotStarted)
                 TaskTextboxChangeEvent.Handler("", 0);
         }

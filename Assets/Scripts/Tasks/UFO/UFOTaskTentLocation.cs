@@ -76,6 +76,9 @@ namespace Assets.Scripts.Tasks.UFO
 
         private void OnTriggerExit(Collider other)
         {
+            if (other.tag != "Player")
+                return;
+
             alienAudioSource.Stop();
             if (task.DetailedState == UFOTask.InternalState.MedicineTaken)
                 TaskTextboxChangeEvent.Handler("", 0);

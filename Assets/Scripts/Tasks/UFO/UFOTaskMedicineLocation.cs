@@ -47,6 +47,7 @@ namespace Assets.Scripts.Tasks.UFO
         {
             if (other.tag != "Player")
                 return;
+
             if (task.DetailedState == UFOTask.InternalState.AlienFound)
                 TaskTextboxChangeEvent.Handler("", 0);
         }
