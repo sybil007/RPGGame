@@ -51,6 +51,9 @@ public static class AnimatorHashes
     public static readonly int Attack = Animator.StringToHash("Attack");
     public static readonly int Type = Animator.StringToHash("Type");
     public static readonly int Reset = Animator.StringToHash("Reset");
+	public static readonly int Death = Animator.StringToHash("Death");
+
+	public static readonly int PlayerInRange = Animator.StringToHash("PlayerInRange");
 }
 
 public static class TaskNames
