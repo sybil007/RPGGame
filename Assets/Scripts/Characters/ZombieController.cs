@@ -6,6 +6,7 @@ public class ZombieController : MonoBehaviour {
 	private AudioSource audioSource;
 	private Animator animator;
 	private GameObject player;
+	private PlayerController playerScript;
 	private CharacterController controller;
 
 	public AudioClip deathClip;
@@ -14,6 +15,7 @@ public class ZombieController : MonoBehaviour {
 	public float RotationSpeed = 2;
 	public float Speed = 10;
 	public float GraveyardEntranceLine = 1780;
+	public float AttackForce = 30;
 
 	bool IsAlive = true;
 	public bool PlayerInRange
@@ -33,6 +35,7 @@ public class ZombieController : MonoBehaviour {
 		animator = GetComponent<Animator>();
 		controller = GetComponent<CharacterController>();
 		player = GameObject.FindGameObjectWithTag("Player");
+		playerScript = player.GetComponent<PlayerController>();
 	}
 
 	// Update is called once per frame
@@ -42,6 +45,11 @@ public class ZombieController : MonoBehaviour {
 		{
 			if (_playerInRange)
 			{
+				if (playerScript.IsDead)
+				{
+					OnPlayerDead();
+					return;
+				}
 				//find the vector pointing from our position to the target
 				var direction = (player.transform.position - transform.position).normalized;
 				//create the rotation we need to be in to look at the target
@@ -56,7 +64,7 @@ public class ZombieController : MonoBehaviour {
 					transform.rotation = new Quaternion(0, transform.rotation.y, 0, transform.rotation.w);
 				}
 
-				if (!IsEqualPosition(transform.position, player.transform.position, 2))
+				if (!IsEqualPosition(transform.position, player.transform.position, 0.1F))
 					controller.Move(Vector3.MoveTowards(transform.position, player.transform.position, step) - transform.position);
 			}
 		}
@@ -105,6 +113,7 @@ public class ZombieController : MonoBehaviour {
 
 	private void OnCollisionEnter(Collision collision)
 	{
+		DetermineCollisionWithPlayer(collision.collider);
 		if (!IsAlive || collision.collider.tag != "PlayerWeapon")
 			return;
 
@@ -119,5 +128,29 @@ public class ZombieController : MonoBehaviour {
 		audioSource.Play();
 
 		animator.SetBool(AnimatorHashes.Death, true);
+	}
+
+	private void OnCollisionStay(Collision collision)
+	{
+		DetermineCollisionWithPlayer(collision.collider);
+	}
+
+	private void DetermineCollisionWithPlayer(Collider col)
+	{
+		if (col.tag != "Player" || !IsAlive)
+			return;
+
+		playerScript.Health -= Time.deltaTime * AttackForce;
+	}
+
+	private void OnPlayerDead()
+	{
+		_playerInRange = false;
+		animator.SetBool(AnimatorHashes.PlayerInRange, false);
+		audioSource.Stop();
+
+		audioSource.clip = killClip;
+		audioSource.loop = false;
+		audioSource.Play();
 	}
 }

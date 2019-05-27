@@ -1,20 +1,38 @@
 ﻿using UnityEngine;
 using System;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
 
-    private const float GravityStrength = 9.81F;
+	private const float GravityStrength = 9.81F;
 
-    #region MovementAndForces
+	#region MovementAndForces
 
-    private Vector3 force = new Vector3(0.0F, 0.0F, 0.0F);
-    private Vector3 lastPosition;
-    private Vector3 position;
-    private int lastSpeed = 0;
-    private Quaternion lastRotation;
-    private Direction lastDirection;
+	private Vector3 force = new Vector3(0.0F, 0.0F, 0.0F);
+	private Vector3 lastPosition;
+	private int lastSpeed = 0;
+	private Quaternion lastRotation;
+	private Direction lastDirection;
+	public Text healthTextbox;
+
+	public float Health {
+		get { return _health; }
+		set
+		{
+			_health = Math.Max(value, 0);
+			healthTextbox.text = "Życie: " + Math.Round(_health) +  " %";
+			if (IsDead)
+			{
+				animator.SetTrigger(AnimatorHashes.Death);
+				GetComponent<CapsuleCollider>().enabled = false;
+				GetComponent<CharacterController>().enabled = false;
+			}
+		}
+	}
+	private float _health = 100;
+	public bool IsDead { get { return Health <= 0; } }
 
     #endregion
 
@@ -48,13 +66,15 @@ public class PlayerController : MonoBehaviour
         lastRotation = camera.transform.rotation;
         charController = GetComponentInChildren<CharacterController>();
         lastPosition = transform.position;
+
         PauseEvent.Handler += OnPauseEvent;
     }
 
     void FixedUpdate()
     {
-        if (!isActive)
+        if (!isActive || IsDead)
             return;
+
         var isOverGUI = EventSystem.current.IsPointerOverGameObject();
 
         // Obrót postaci jest w kontrolerze obrotu kamery
@@ -109,6 +129,7 @@ public class PlayerController : MonoBehaviour
 
         // Siła grawitacji
         lastPosition = transform.position;
+		lastRotation = transform.rotation;
         force.y -= GravityStrength * CharacterMass * Time.deltaTime;
         charController.Move(force * Time.deltaTime);
 
@@ -117,7 +138,7 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger(AnimatorHashes.Attack);
     }
 
-    private void OnPauseEvent(bool pause)
+	private void OnPauseEvent(bool pause)
     {
         if (pause)
         {

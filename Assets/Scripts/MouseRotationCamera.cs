@@ -14,12 +14,14 @@ public class MouseRotationCamera : MonoBehaviour
     private float pitch = 0.0f;
     private new Camera camera;
     private GameObject player;
+	private PlayerController playerScript;
     public bool isActive = true;
 
     void Start()
     {
         camera = Camera.main;
         player = GameObject.FindGameObjectWithTag("Player");
+		playerScript = player.GetComponent<PlayerController>();
         PauseEvent.Handler += OnPauseEvent;
     }
 
@@ -36,7 +38,8 @@ public class MouseRotationCamera : MonoBehaviour
         }
 
         transform.eulerAngles = new Vector3(pitch, yaw, 0.0f);
-        player.transform.eulerAngles = new Vector3(0.0f, yaw, 0.0f);
+		if (!playerScript.IsDead)
+			player.transform.eulerAngles = new Vector3(0.0f, yaw, 0.0f);
 
         float fov = camera.fieldOfView;
         if (!isOverGUI)
