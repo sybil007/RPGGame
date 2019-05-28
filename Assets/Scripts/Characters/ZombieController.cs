@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 
 public class ZombieController : MonoBehaviour {
@@ -11,13 +12,14 @@ public class ZombieController : MonoBehaviour {
 
 	public AudioClip deathClip;
 	public AudioClip killClip;
+	public AudioClip allZombiesDeadClip;
 
 	public float RotationSpeed = 2;
 	public float Speed = 10;
 	public float GraveyardEntranceLine = 1780;
 	public float AttackForce = 30;
 
-	bool IsAlive = true;
+	public bool IsAlive = true;
 	public bool PlayerInRange
 	{
 		get { return _playerInRange; }
@@ -128,6 +130,13 @@ public class ZombieController : MonoBehaviour {
 		audioSource.Play();
 
 		animator.SetBool(AnimatorHashes.Death, true);
+
+		if (GameObject.FindGameObjectsWithTag("Zombie").All(x => !x.GetComponent<ZombieController>().IsAlive))
+		{
+			playerScript.AudioSource.Stop();
+			playerScript.AudioSource.clip = allZombiesDeadClip;
+			playerScript.AudioSource.Play();
+		}
 	}
 
 	private void OnCollisionStay(Collision collision)

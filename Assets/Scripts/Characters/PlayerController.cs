@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
 	private Quaternion lastRotation;
 	private Direction lastDirection;
 	public Text healthTextbox;
+	public AudioSource AudioSource;
+	public AudioClip DeathClip;
 
 	public float Health {
 		get { return _health; }
@@ -28,6 +30,10 @@ public class PlayerController : MonoBehaviour
 				animator.SetTrigger(AnimatorHashes.Death);
 				GetComponent<CapsuleCollider>().enabled = false;
 				GetComponent<CharacterController>().enabled = false;
+
+				AudioSource.Stop();
+				AudioSource.clip = DeathClip;
+				AudioSource.Play();
 			}
 		}
 	}
@@ -66,6 +72,7 @@ public class PlayerController : MonoBehaviour
         lastRotation = camera.transform.rotation;
         charController = GetComponentInChildren<CharacterController>();
         lastPosition = transform.position;
+		AudioSource = GetComponent<AudioSource>();
 
         PauseEvent.Handler += OnPauseEvent;
     }

@@ -35,7 +35,6 @@ public class TutorialController : MonoBehaviour
         TaskCompletedEvent.Handler += TaskCompleted;
 
         trapObject = GameObject.Find("/Dom północny/_Door_parent/Door");
-        trapObject.SendMessage("Activate", false);
 	}
 	
 	// Update is called once per frame

@@ -54,6 +54,8 @@ public static class AnimatorHashes
 	public static readonly int Death = Animator.StringToHash("Death");
 
 	public static readonly int PlayerInRange = Animator.StringToHash("PlayerInRange");
+	public static readonly int Talk = Animator.StringToHash("talkTrigger");
+	public static readonly int Hello = Animator.StringToHash("helloTrigger");
 }
 
 public static class TaskNames
